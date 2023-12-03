@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: api
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=pwd
+      - POSTGRES_DB=test
+
+  raspberry:
+    build:
+      context: raspberry
+      dockerfile: Dockerfile
+    ports:
+      - "1883:1883"
+    depends_on:
+      - web
+      - db
+
+volumes:
+  postgres_data:
